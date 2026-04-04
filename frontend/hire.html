@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Hire Farm Labour</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<section class="hire-section">
+
+<div class="overlay"></div>
+
+<div class="hire-container">
+
+<h1>Hire Farm Labour</h1>
+
+<p>Post your farm work and find trusted labour near you</p>
+
+<<form class="labourForm" id="labourForm">
+
+  <div class="input-box">
+    <i class="fa-solid fa-location-dot"></i>
+    <input type="text" id="location" placeholder="Village / Location" required>
+  </div>
+
+  <div class="input-box">
+    <i class="fa-solid fa-seedling"></i>
+    <input type="text" id="workType" placeholder="Type of Farm Work" required>
+  </div>
+
+  <div class="input-box">
+    <i class="fa-solid fa-users"></i>
+    <input type="number" id="workersNeeded" placeholder="Number of Workers Needed" min="0" required>
+  </div>
+
+  <div class="input-box">
+    <i class="fa-solid fa-calendar"></i>
+    <input type="date" id="date" required>
+  </div>
+
+  <button type="submit" class="post-btn">Post Job</button>
+
+</form> 
+
+</div>
+
+</section>
+
+<section class="farm-gallery">
+
+<h2>Farm Work Examples</h2>
+
+<div class="gallery">
+
+<img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30">
+
+<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b">
+
+<img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854">
+
+<img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef">
+
+</div>
+
+</section>
+
+</body>
+
+</html>
+
+
+<script>
+document.getElementById("labourForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const data = {
+    location: document.getElementById("location").value,
+    workType: document.getElementById("workType").value,
+    workersNeeded: document.getElementById("workersNeeded").value,
+    date: document.getElementById("date").value
+  };
+
+  try {
+    const response = await fetch("http://localhost:5000/labour/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    alert(result.message);
+  } catch(err) {
+    console.log("Error:", err);
+    alert("Something went wrong, check console.");
+  }
+});
+</script>
+</body>
