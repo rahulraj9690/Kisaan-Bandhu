@@ -124,7 +124,7 @@ text-decoration:none;
 
 <div class="card" id="loginCard">
 
-<img src="logo.png" class="logo-icon">
+<img src="login logo.png" class="logo-icon">
 
 <div class="logo-title">Kisan Bandhu Portal</div>
 
@@ -186,6 +186,7 @@ Pehle se account hai?
 
 </div>
 
+<script src="config.js"></script>
 <script>
 
 function showSignup(){
@@ -198,25 +199,106 @@ document.getElementById("signupCard").style.display="none";
 document.getElementById("loginCard").style.display="block";
 }
 
-function login(){
-alert("Login Successful (Demo)");
+async function login(){
+    const phone = document.querySelector("#loginCard input[type='tel']").value;
+    const password = document.querySelector("#loginCard input[type='password']").value;
+    const role = document.querySelector("#loginCard select").value;
+
+    if (!phone || !password || role === "Select Role") {
+        alert("Please fill all fields");
+        return;
+    }
+
+    try {
+        const apiUrl = typeof API_CONFIG !== "undefined" 
+            ? API_CONFIG.getFullUrl(API_CONFIG.endpoints.users + "/login")
+            : "/api/users/login";
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ phone, password, role })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert("Login Successful! 🌾");
+            // Redirect to dashboard or home page
+            window.location.href = "index.html";
+        } else {
+            alert(result.error || "Login failed");
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        alert("Network error. Please try again.");
+    }
 }
 
-function sendOTP(){
-alert("OTP Sent: 1234 (Demo)");
+async function sendOTP(){
+    const email = document.querySelector("#signupCard input[type='email']").value;
+    const phone = document.querySelector("#signupCard input[type='tel']").value;
+    
+    if (!email || !phone) {
+        alert("Please enter email and phone number");
+        return;
+    }
+
+    try {
+        // For demo purposes, just show OTP
+        alert("OTP Sent: 1234 (Demo)");
+        // In production, this would make an API call to send real OTP
+    } catch (error) {
+        console.error("OTP send error:", error);
+        alert("Failed to send OTP");
+    }
 }
 
-function verifyOTP(){
+async function verifyOTP(){
+    const otp = document.getElementById("otp").value;
+    const name = document.querySelector("#signupCard input[placeholder='Naam']").value;
+    const email = document.querySelector("#signupCard input[type='email']").value;
+    const phone = document.querySelector("#signupCard input[type='tel']").value;
+    const password = document.querySelector("#signupCard input[placeholder='Password']").value;
+    const role = document.querySelector("#signupCard select").value;
 
-let otp=document.getElementById("otp").value;
+    if (!name || !email || !phone || !password || !otp || role === "Select Role") {
+        alert("Please fill all fields");
+        return;
+    }
 
-if(otp=="1234"){
-alert("Account Created Successfully 🌾");
-showLogin();
-}else{
-alert("Invalid OTP");
-}
+    if (otp !== "1234") {
+        alert("Invalid OTP");
+        return;
+    }
 
+    try {
+        const apiUrl = typeof API_CONFIG !== "undefined" 
+            ? API_CONFIG.getFullUrl(API_CONFIG.endpoints.users + "/register")
+            : "/api/users/register";
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, email, phone, password, role })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert("Account Created Successfully! 🌾");
+            showLogin();
+        } else {
+            alert(result.error || "Registration failed");
+        }
+    } catch (error) {
+        console.error("Registration error:", error);
+        alert("Network error. Please try again.");
+    }
 }
 
 </script>
