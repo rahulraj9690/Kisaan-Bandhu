@@ -7,10 +7,6 @@
       "destination": "/api"
     }
   ],
-  "env": [
-    "MONGODB_URI",
-    "DATABASE_URL"
-  ],
   "functions": {
     "api/index.js": {
       "memory": 1024,
