@@ -75,7 +75,7 @@
 
 </html>
 
-
+<script src="config.js"></script>
 <script>
 document.getElementById("labourForm").addEventListener("submit", async function(e){
   e.preventDefault();
@@ -88,7 +88,11 @@ document.getElementById("labourForm").addEventListener("submit", async function(
   };
 
   try {
-    const response = await fetch("http://localhost:5000/labour/add", {
+    const apiUrl = typeof API_CONFIG !== "undefined" 
+      ? API_CONFIG.getFullUrl(API_CONFIG.endpoints.labour + "/add")
+      : "/api/labour/add";
+
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -97,7 +101,8 @@ document.getElementById("labourForm").addEventListener("submit", async function(
     });
 
     const result = await response.json();
-    alert(result.message);
+    alert(result.message || "Labour request submitted!");
+    document.getElementById("labourForm").reset();
   } catch(err) {
     console.log("Error:", err);
     alert("Something went wrong, check console.");
