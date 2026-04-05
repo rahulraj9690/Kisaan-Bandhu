@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: kisaan-bandhu-api
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: NODE_ENV
+        value: production
+    routes:
+      - path: /api
+        destination: /
