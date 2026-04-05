@@ -15,18 +15,18 @@ const machineRoutes = require("../backend/routes/machineRoutes");
 const userRoutes = require("../backend/routes/userRoutes");
 
 // Basic health check
-app.get("/api/health", (req, res) => {
+app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Kisaan Bandhu Backend Running" });
 });
 
 // API Routes
-app.use("/api/jobs", jobRoutes);
-app.use("/api/labour", labourRoutes);
-app.use("/api/machines", machineRoutes);
-app.use("/api/users", userRoutes);
+app.use("/jobs", jobRoutes);
+app.use("/labour", labourRoutes);
+app.use("/machines", machineRoutes);
+app.use("/users", userRoutes);
 
 // Fallback route
-app.get("/api/", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({ message: "Kisaan Bandhu Backend API" });
 });
 
