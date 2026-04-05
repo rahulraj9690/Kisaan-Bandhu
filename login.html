@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kisan Portal</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+}
+
+/* VIDEO BACKGROUND */
+
+.video-bg{
+position:fixed;
+right:0;
+bottom:0;
+min-width:100%;
+min-height:100%;
+z-index:-1;
+object-fit:cover;
+}
+
+/* CARD */
+
+.card{
+width:360px;
+background:rgba(255,255,255,0.95);
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+text-align:center;
+animation:fade 0.5s ease;
+}
+
+@keyframes fade{
+from{opacity:0; transform:translateY(20px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* LOGO */
+
+.logo-icon{
+width:70px;
+margin-bottom:10px;
+}
+
+.logo-title{
+font-size:22px;
+font-weight:bold;
+margin-bottom:20px;
+color:#2d8f50;
+}
+
+/* INPUT */
+
+input, select{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:12px;
+background:#2d8f50;
+color:white;
+border:none;
+border-radius:6px;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#257944;
+}
+
+/* LINK */
+
+.switch-text{
+margin-top:15px;
+font-size:14px;
+}
+
+.switch-text a{
+color:#2d8f50;
+font-weight:bold;
+cursor:pointer;
+text-decoration:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- BACKGROUND VIDEO -->
+
+<video autoplay muted loop class="video-bg">
+<source src="login.mp4" type="video/mp4">
+</video>
+
+<!-- LOGIN CARD -->
+
+<div class="card" id="loginCard">
+
+<img src="login logo.png" class="logo-icon">
+
+<div class="logo-title">Kisan Bandhu Portal</div>
+
+<select>
+<option>Select Role</option>
+<option>Farmer</option>
+<option>Labour</option>
+<option>Buyer</option>
+</select>
+
+<input type="tel" placeholder="Phone Number">
+
+<input type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<p class="switch-text">
+Account nahi hai?
+<a onclick="showSignup()">Sign Up karein</a>
+</p>
+
+</div>
+
+<!-- SIGNUP CARD -->
+
+<div class="card" id="signupCard" style="display:none;">
+
+<img src="logo.png" class="logo-icon">
+
+<div class="logo-title">Naya Account Banayein</div>
+
+<select>
+<option>Select Role</option>
+<option>Farmer</option>
+<option>Labour</option>
+<option>Buyer</option>
+</select>
+
+<input type="text" placeholder="Naam">
+
+<input type="email" placeholder="Email">
+
+<input type="tel" placeholder="Phone Number">
+
+<input type="password" placeholder="Password">
+
+<input type="password" placeholder="Confirm Password">
+
+<button onclick="sendOTP()">Send OTP</button>
+
+<input type="text" id="otp" placeholder="Enter OTP">
+
+<button onclick="verifyOTP()">Verify & Register</button>
+
+<p class="switch-text">
+Pehle se account hai?
+<a onclick="showLogin()">Login karein</a>
+</p>
+
+</div>
+
+<script src="config.js"></script>
+<script>
+
+function showSignup(){
+document.getElementById("loginCard").style.display="none";
+document.getElementById("signupCard").style.display="block";
+}
+
+function showLogin(){
+document.getElementById("signupCard").style.display="none";
+document.getElementById("loginCard").style.display="block";
+}
+
+async function login(){
+    const phone = document.querySelector("#loginCard input[type='tel']").value;
+    const password = document.querySelector("#loginCard input[type='password']").value;
+    const role = document.querySelector("#loginCard select").value;
+
+    if (!phone || !password || role === "Select Role") {
+        alert("Please fill all fields");
+        return;
+    }
+
+    try {
+        const apiUrl = typeof API_CONFIG !== "undefined" 
+            ? API_CONFIG.getFullUrl(API_CONFIG.endpoints.users + "/login")
+            : "/api/users/login";
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ phone, password, role })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert("Login Successful! 🌾");
+            // Redirect to dashboard or home page
+            window.location.href = "index.html";
+        } else {
+            alert(result.error || "Login failed");
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        alert("Network error. Please try again.");
+    }
+}
+
+async function sendOTP(){
+    const email = document.querySelector("#signupCard input[type='email']").value;
+    const phone = document.querySelector("#signupCard input[type='tel']").value;
+    
+    if (!email || !phone) {
+        alert("Please enter email and phone number");
+        return;
+    }
+
+    try {
+        // For demo purposes, just show OTP
+        alert("OTP Sent: 1234 (Demo)");
+        // In production, this would make an API call to send real OTP
+    } catch (error) {
+        console.error("OTP send error:", error);
+        alert("Failed to send OTP");
+    }
+}
+
+async function verifyOTP(){
+    const otp = document.getElementById("otp").value;
+    const name = document.querySelector("#signupCard input[placeholder='Naam']").value;
+    const email = document.querySelector("#signupCard input[type='email']").value;
+    const phone = document.querySelector("#signupCard input[type='tel']").value;
+    const password = document.querySelector("#signupCard input[placeholder='Password']").value;
+    const role = document.querySelector("#signupCard select").value;
+
+    if (!name || !email || !phone || !password || !otp || role === "Select Role") {
+        alert("Please fill all fields");
+        return;
+    }
+
+    if (otp !== "1234") {
+        alert("Invalid OTP");
+        return;
+    }
+
+    try {
+        const apiUrl = typeof API_CONFIG !== "undefined" 
+            ? API_CONFIG.getFullUrl(API_CONFIG.endpoints.users + "/register")
+            : "/api/users/register";
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, email, phone, password, role })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert("Account Created Successfully! 🌾");
+            showLogin();
+        } else {
+            alert(result.error || "Registration failed");
+        }
+    } catch (error) {
+        console.error("Registration error:", error);
+        alert("Network error. Please try again.");
+    }
+}
+
+</script>
+
+</body>
+</html>
